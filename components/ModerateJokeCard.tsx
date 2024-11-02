@@ -1,8 +1,14 @@
-import { Joke } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 
+// Simplified joke structure specifically for ModerateJokeCard
+interface SimpleJoke {
+  id: string;
+  content: string;
+  type: string;
+}
+
 interface Props {
-  joke: Joke;
+  joke: SimpleJoke;
   onApprove: () => void;
   onReject: () => void;
 }

@@ -6,10 +6,17 @@ import { ModerateJokeCard } from "@/components/ModerateJokeCard";
 import { useAuth } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 
+// Define the structure of a simplified joke for the card
+interface SimpleJoke {
+  id: string;
+  content: string;
+  type: string;
+}
+
 export default function Moderate() {
   const { user } = useAuth();
   const router = useRouter();
-  const [currentJoke, setCurrentJoke] = useState(null);
+  const [currentJoke, setCurrentJoke] = useState<SimpleJoke | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -22,7 +29,11 @@ export default function Moderate() {
   const fetchNextJoke = async () => {
     try {
       const joke = await api.getUnmoderatedJoke();
-      setCurrentJoke(joke);
+      setCurrentJoke({
+        id: joke.id,
+        content: joke.content,
+        type: joke.type,
+      });
     } catch (error) {
       console.error("Failed to fetch joke:", error);
     }
@@ -31,9 +42,9 @@ export default function Moderate() {
   const handleApprove = async () => {
     if (!currentJoke) return;
     try {
-      await api.approveJoke(currentJoke.id as string, {
-        content: currentJoke.content as string,
-        type: currentJoke.type as string,
+      await api.approveJoke(currentJoke.id, {
+        content: currentJoke.content,
+        type: currentJoke.type,
       });
       fetchNextJoke();
     } catch (error) {

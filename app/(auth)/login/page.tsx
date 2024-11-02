@@ -19,10 +19,14 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState({
+  const [toastMessage, setToastMessage] = useState<{
+    title: string;
+    description: string;
+    variant: "default" | "destructive";
+  }>({
     title: "",
     description: "",
-    variant: "default" as const,
+    variant: "default",
   });
 
   const showNotification = (
@@ -39,7 +43,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const { token } = await api.login(email, password);
-      login(token); // This will now redirect to /dashboard
+      login(token);
       showNotification("Success", "Login successful!");
     } catch (error) {
       console.error("Login failed:", error);
