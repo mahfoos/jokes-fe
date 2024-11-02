@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Joke } from "./types";
 
 const DELIVER_API = "http://localhost:3001/api";
 const MODERATE_API = "http://localhost:3002/api";
@@ -31,20 +32,30 @@ export const api = {
   },
 
   // Moderation
-  getUnmoderatedJoke: async () => {
-    const { data } = await axios.get(`${MODERATE_API}/jokes/next`, {
-      headers: getAuthHeader(),
-    });
-    return data;
+  getUnmoderatedJoke: async (): Promise<Joke | null> => {
+    try {
+      const response = await axios.get(`${MODERATE_API}/jokes/next`, {
+        headers: getAuthHeader(),
+      });
+      // Take the first unmoderated joke from the array
+      const jokes: Joke[] = response.data;
+      return jokes.length > 0 ? jokes[0] : null;
+    } catch (error) {
+      console.error("Failed to fetch unmoderated jokes:", error);
+      return null;
+    }
   },
 
   approveJoke: async (id: string, joke: { content: string; type: string }) => {
-    const { data } = await axios.post(
-      `${MODERATE_API}/jokes/${id}/approve`,
-      joke,
-      { headers: getAuthHeader() }
-    );
-    return data;
+    try {
+      await axios.post(`${MODERATE_API}/jokes/${id}/approve`, joke, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      return true;
+    } catch (error) {
+      console.error("Failed to approve joke:", error);
+      return false;
+    }
   },
 
   rejectJoke: async (id: string) => {

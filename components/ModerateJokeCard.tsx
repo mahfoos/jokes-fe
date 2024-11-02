@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
-// Simplified joke structure specifically for ModerateJokeCard
 interface SimpleJoke {
   id: string;
   content: string;
@@ -9,23 +10,83 @@ interface SimpleJoke {
 
 interface Props {
   joke: SimpleJoke;
-  onApprove: () => void;
+  jokeTypes: string[]; // Add jokeTypes prop
+  onApprove: (updatedJoke: SimpleJoke) => void;
   onReject: () => void;
 }
 
-export function ModerateJokeCard({ joke, onApprove, onReject }: Props) {
+export function ModerateJokeCard({
+  joke,
+  jokeTypes,
+  onApprove,
+  onReject,
+}: Props) {
+  const [content, setContent] = useState(joke.content);
+  const [type, setType] = useState(joke.type);
+  const [newType, setNewType] = useState(""); // For adding a new type
+  const [useNewType, setUseNewType] = useState(false); // Toggle between existing and new type
+
+  const handleApprove = () => {
+    const finalType = useNewType && newType ? newType : type;
+    onApprove({ ...joke, content, type: finalType });
+  };
+
   return (
-    <div className="p-6 bg-white rounded-lg shadow">
-      <p className="text-lg mb-4">{joke.content}</p>
-      <p className="mb-4">Type: {joke.type}</p>
-      <div className="flex gap-4">
-        <Button onClick={onApprove} className="bg-green-600 hover:bg-green-700">
-          Approve
-        </Button>
-        <Button onClick={onReject} className="bg-red-600 hover:bg-red-700">
+    <Card>
+      <CardContent className="pt-6">
+        <div className="space-y-4">
+          <label className="block text-gray-700">Joke Content</label>
+          <textarea
+            className="w-full border rounded p-2 mt-1"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+          <label className="block text-gray-700">Joke Type</label>
+          {!useNewType ? (
+            <select
+              className="w-full border rounded p-2 mt-1"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              {jokeTypes.map((jokeType) => (
+                <option key={jokeType} value={jokeType}>
+                  {jokeType}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              className="w-full border rounded p-2 mt-1"
+              placeholder="Enter new type"
+              value={newType}
+              onChange={(e) => setNewType(e.target.value)}
+            />
+          )}
+          <div className="mt-2">
+            <label className="flex items-center text-gray-700">
+              <input
+                type="checkbox"
+                checked={useNewType}
+                onChange={() => setUseNewType(!useNewType)}
+                className="mr-2"
+              />
+              Add as a new type
+            </label>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="flex gap-4 justify-end">
+        <Button onClick={onReject} variant="destructive">
           Reject
         </Button>
-      </div>
-    </div>
+        <Button
+          onClick={handleApprove}
+          className="bg-green-600 hover:bg-green-700"
+        >
+          Approve
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

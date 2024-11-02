@@ -1,7 +1,8 @@
 export interface Joke {
-  id: string;
+  _id: string; // Changed from id to _id to match MongoDB
   content: string;
   type: string;
+  isModerated: boolean;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
