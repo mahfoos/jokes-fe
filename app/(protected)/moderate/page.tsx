@@ -52,7 +52,7 @@ export default function Moderate() {
       return;
     }
     fetchNextJoke();
-    fetchJokeTypes(); // Fetch joke types on component mount
+    fetchJokeTypes();
   }, [user, router]);
 
   const fetchJokeTypes = async () => {

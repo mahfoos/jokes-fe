@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
-  user: any | null;
+  user: unknown | null;
   login: (token: string) => void;
   logout: () => void;
 }
@@ -13,7 +13,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<unknown | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("token", token);
     const decoded = jwtDecode(token);
     setUser(decoded);
-    router.push("/dashboard"); // Redirect to dashboard after login
+    router.push("/dashboard");
   };
 
   const logout = () => {

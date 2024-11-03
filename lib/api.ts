@@ -1,9 +1,9 @@
 import axios from "axios";
 import { Joke } from "./types";
 
-const DELIVER_API = "http://localhost:3001/api";
-const MODERATE_API = "http://localhost:3002/api";
-const SUBMIT_API = "http://localhost:3003/api";
+const DELIVER_API = process.env.NEXT_PUBLIC_DELIVER_API;
+const MODERATE_API = process.env.NEXT_PUBLIC_MODERATE_API;
+const SUBMIT_API = process.env.NEXT_PUBLIC_SUBMIT_API;
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
@@ -11,7 +11,6 @@ const getAuthHeader = () => {
 };
 
 export const api = {
-  // Auth
   login: async (email: string, password: string) => {
     const { data } = await axios.post(`${MODERATE_API}/auth/login`, {
       email,
@@ -37,7 +36,6 @@ export const api = {
       const response = await axios.get(`${MODERATE_API}/jokes/next`, {
         headers: getAuthHeader(),
       });
-      // Take the first unmoderated joke from the array
       const jokes: Joke[] = response.data;
       return jokes.length > 0 ? jokes[0] : null;
     } catch (error) {
@@ -49,7 +47,7 @@ export const api = {
   approveJoke: async (id: string, joke: { content: string; type: string }) => {
     try {
       await axios.post(`${MODERATE_API}/jokes/${id}/approve`, joke, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: getAuthHeader(),
       });
       return true;
     } catch (error) {

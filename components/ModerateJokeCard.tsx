@@ -10,7 +10,7 @@ interface SimpleJoke {
 
 interface Props {
   joke: SimpleJoke;
-  jokeTypes: string[]; // Add jokeTypes prop
+  jokeTypes: string[];
   onApprove: (updatedJoke: SimpleJoke) => void;
   onReject: () => void;
 }
@@ -23,8 +23,8 @@ export function ModerateJokeCard({
 }: Props) {
   const [content, setContent] = useState(joke.content);
   const [type, setType] = useState(joke.type);
-  const [newType, setNewType] = useState(""); // For adding a new type
-  const [useNewType, setUseNewType] = useState(false); // Toggle between existing and new type
+  const [newType, setNewType] = useState("");
+  const [useNewType, setUseNewType] = useState(false);
 
   const handleApprove = () => {
     const finalType = useNewType && newType ? newType : type;
