@@ -39,7 +39,7 @@ export default function Moderate() {
   const showNotification = (
     title: string,
     description: string,
-    variant: "default" | "destructive"
+    variant: "default"
   ) => {
     setToastMessage({ title, description, variant });
     setShowToast(true);
@@ -61,7 +61,7 @@ export default function Moderate() {
       setJokeTypes(types);
     } catch (error) {
       console.error("Failed to fetch joke types:", error);
-      showNotification("Error", "Failed to load joke types", "destructive");
+      showNotification("Error", "Failed to load joke types", "default");
     }
   };
 
@@ -82,14 +82,18 @@ export default function Moderate() {
       showNotification(
         "Error",
         "Failed to fetch joke for moderation",
-        "destructive"
+        "default"
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleApprove = async (updatedJoke) => {
+  const handleApprove = async (updatedJoke: {
+    id: string;
+    content: string;
+    type: string;
+  }) => {
     if (!updatedJoke.id) {
       console.error("Joke ID is missing");
       return;
@@ -108,7 +112,7 @@ export default function Moderate() {
       }
     } catch (error) {
       console.error("Failed to approve joke:", error);
-      showNotification("Error", "Failed to approve joke", "destructive");
+      showNotification("Error", "Failed to approve joke", "default");
     } finally {
       setLoading(false);
     }
@@ -123,7 +127,7 @@ export default function Moderate() {
       fetchNextJoke();
     } catch (error) {
       console.error("Failed to reject joke:", error);
-      showNotification("Error", "Failed to reject joke", "destructive");
+      showNotification("Error", "Failed to reject joke", "default");
     } finally {
       setLoading(false);
     }
