@@ -4,8 +4,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 
+interface DecodedUser {
+  email: string;
+}
+
 interface AuthContextType {
-  user: unknown | null;
+  user: DecodedUser | null;
+  loading: boolean;
   login: (token: string) => void;
   logout: () => void;
 }
@@ -13,14 +18,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<unknown | null>(null);
+  const [user, setUser] = useState<DecodedUser | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decoded = jwtDecode(token);
+        const decoded: DecodedUser = jwtDecode(token);
         setUser(decoded);
       } catch (error) {
         console.error("Invalid token:", error);
@@ -28,11 +34,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push("/login");
       }
     }
+    setLoading(false);
   }, []);
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
-    const decoded = jwtDecode(token);
+    const decoded: DecodedUser = jwtDecode(token);
     setUser(decoded);
     router.push("/dashboard");
   };
@@ -44,8 +51,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 }

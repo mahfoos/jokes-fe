@@ -3,12 +3,13 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/AuthProvider";
+import { User } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User | null };
   const router = useRouter();
 
   useEffect(() => {
